@@ -1,0 +1,57 @@
+# depslib dependency file v1.0
+1752529655 source:c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\exam.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"exam.h"
+	"categorie.h"
+	"user.h"
+	"vente.h"
+
+1752272238 c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\exam.h
+
+1752529885 source:c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<windows.h>
+	"user.h"
+
+1752594908 source:c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\categorie.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"categorie.h"
+
+1752594909 c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\categorie.h
+
+1752332315 c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\user.h
+
+1752530087 source:c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\user.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"user.h"
+
+1752344730 c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\vente.h
+
+1752425041 source:c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\vente.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<time.h>
+	"vente.h"
+
+1752358640 source:c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\utile.c
+	<stdio.h>
+	"utile.h"
+
+1752358647 c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\utile.h
+
+1752427491 source:c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\rapport.c
+	<stdio.h>
+	<time.h>
+	<windows.h>
+
+1752359183 c:\users\pc\desktop\etude l1gl isi\languagec\projetexame\exam\rapport.h
+

@@ -1,0 +1,453 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include "exam.h"
+#include "categorie.h"
+#include "user.h"
+#include "vente.h"
+
+
+#define RESET   "\x1b[0m"
+#define RED     "\x1b[31m"
+#define GREEN   "\x1b[32m"
+#define YELLOW  "\x1b[33m"
+#define BLUE    "\x1b[34m"
+#define CYAN    "\x1b[36m"
+#define MAGENTA "\x1b[35m"
+#define WHITE   "\x1b[37m"
+
+
+
+PRODUIT p;
+FILE *pd;
+
+/*void menu() {
+    puts("======================================");
+    puts("       *** Gestion des Produits ***   ");
+    puts("======================================");
+    puts("1. Ajouter un produit");
+    puts("2. Modifier un produit");
+    puts("3. Supprimer un produit");
+    puts("4. Rechercher un produit");
+    puts("5. Afficher la liste des produits");
+    puts("6. Retour au menu principal");
+    puts("7.Quitter");
+    puts("======================================");
+    printf("Choix : ");
+}*/
+
+void menu() {
+    printf("\x1b[36m╔══════════════════════════════════════╗\n\x1b[0m");
+    printf("\x1b[32m║       *** Gestion des Produits ***   ║\n\x1b[0m");
+    printf("\x1b[36m╠══════════════════════════════════════╣\n\x1b[0m");
+
+
+    printf("║ \x1b[36m1.\x1b[33m Ajouter un produit                \x1b[0m║\n");
+    printf("║ \x1b[36m2.\x1b[33m Modifier un produit               \x1b[0m║\n");
+    printf("║ \x1b[36m3.\x1b[33m Supprimer un produit              \x1b[0m║\n");
+    printf("║ \x1b[36m4.\x1b[33m Rechercher un produit             \x1b[0m║\n");
+    printf("║ \x1b[36m5.\x1b[33m Afficher la liste des produits    \x1b[0m║\n");
+    printf("║ \x1b[31m6.\x1b[33m Retour au menu principal          \x1b[0m║\n");
+   // printf("║ \x1b[31m7.\x1b[33m Quitter                           \x1b[0m║\n");
+
+    printf("\x1b[36m╚══════════════════════════════════════╝\n\x1b[0m");
+
+    printf("Choix : ");
+}
+
+
+
+
+
+void printproduit(){
+do {
+        printf("Donner le code du produit (5 caractères) : ");
+        scanf("%s", p.code);
+        if (strlen(p.code) != 5) {
+            printf("[ERREUR] Le code doit avoir exactement 5 caractères.\n");
+        }
+} while (strlen(p.code) != 5);
+printf("Donner la designation du produit : ");
+scanf(" %s",&p.designation);
+do{
+printf("Donner le prix du produit : ");
+scanf("%d",&p.prix);
+}while(p.prix<=0);
+do{
+printf("Donner laquantite du produit : ");
+scanf("%d",&p.quantite);
+}while(p.quantite<=0);
+do{
+printf("Donner la categorie du produit : ");
+scanf("%d",&p.categorie);
+}while(p.categorie<=0);
+printf("Donner la date de peremtion(aaaa/mm/jj) : ");
+scanf(" %s",&p.date_p);
+}
+
+
+
+void produit(){
+do {
+        printf("Donner le nouvelle code du produit (5 caractères) : ");
+        scanf("%s", p.code);
+        if (strlen(p.code) != 5) {
+        printf("[ERREUR] Le code doit avoir exactement 5 caractères.\n");
+        }
+} while (strlen(p.code) != 5);
+printf("Donner la nouvelle designation du produit : ");
+scanf(" %s",&p.designation);
+do{
+printf("Donner le nouveau prix du produit : ");
+scanf("%d",&p.prix);
+}while(p.prix<=0);
+do{
+printf("Donner la nouvelle quantite du produit : ");
+scanf("%d",&p.quantite);
+}while(p.quantite<=0);
+do{
+printf("Donner la nouvelle categorie du produit : ");
+scanf("%d",&p.categorie);
+}while(p.categorie<=0);
+printf("Donner la nouvelledate de peremtion(aaaa/mm/jj) : ");
+scanf(" %s",&p.date_p);
+}
+
+
+
+
+void verification(FILE * pd){
+if(pd==NULL){
+    puts("le fichier n'est pas ouverts");
+    exit(1);
+}
+}
+
+
+
+void ajouteproduit(){
+     animationChargement("\x1b[36m🔷 Chargement du module ajou-produit\x1b[0m");
+    printproduit();
+    pd=fopen("PRODUIT.dat","a+");
+    verification(pd);
+    fprintf(pd,"%s\t %s\t %d\t %d\t %d\t %s\t",p.code,p.designation,p.prix,p.quantite,p.categorie,p.date_p);
+    puts("✅PRODUITS AJOUTER AVEC SUCCES");
+    fclose(pd);
+}
+
+
+
+
+void modifieproduit(){
+     animationChargement("\x1b[36m🔷 Chargement du module modifier-produit\x1b[0m");
+    int verif=0;
+    char code[6];
+    printf("entre le code rechercher : ");
+    scanf("%s",&code);
+    pd=fopen("PRODUIT.dat","r");
+    FILE * tmp=fopen("tmp.dat","w");
+    verification(tmp);
+    verification(pd);
+    while(fscanf(pd,"%s\n %s\n %d\n %d\n %d\n %s\n",p.code,p.designation,&p.prix,&p.quantite,&p.categorie,p.date_p)==6){
+        if(strcmp(code, p.code) == 0){
+            verif   =  1;
+            produit();
+    }
+         fprintf(tmp,"%s\n %s\n %d\n %d\n %d\n %s\n",p.code,p.designation,p.prix,p.quantite,p.categorie,p.date_p);
+    }
+    fclose(tmp);
+    fclose(pd);
+    remove("PRODUIT.dat");
+    rename("tmp.dat","PRODUIT.dat");
+    (verif)?printf("Produit modifier avec succes"):printf("produit n'exite pas");
+}
+
+
+
+void supprimeproduit(){
+     animationChargement("\x1b[36m🔷 Chargement du module supprimer-produit\x1b[0m");
+ int verif=0;
+    char code[6];
+    printf("entre le code rechercher : ");
+    scanf("%s",&code);
+    pd=fopen("PRODUIT.dat","r");
+    FILE * tmp=fopen("tmp.dat","w");
+    verification(tmp);
+    verification(pd);
+     while(fscanf(pd,"%s\n %s\n %d\n %d\n %d\n %s\n",p.code,p.designation,&p.prix,&p.quantite,&p.categorie,p.date_p)==6){
+        if(strcmp(code, p.code) == 0){
+            verif= 1;
+        }else{
+         fprintf(tmp,"%s\n %s\n %d\n %d\n %d\n %s\n",p.code,p.designation,p.prix,p.quantite,p.categorie,p.date_p);
+    }
+
+}
+    fclose(tmp);
+    fclose(pd);
+    remove("PRODUIT.dat");
+    rename("tmp.dat","PRODUIT.dat");
+    (verif)?printf("\nProduit supprimer avec succes\n"):printf("\n produit n'exite pas \n");
+}
+
+void rechercheproduit(){
+     animationChargement("\x1b[36m🔷 Chargement du module recherce-produit\x1b[0m");
+    int trouve=0;
+     char code[6];
+    printf("entre le code rechercher : ");
+    scanf("%s",&code);
+    pd=fopen("PRODUIT.dat","r");
+    verification(pd);
+     printf("\n%-6s %-20s %-8sXOF %-10s %-10s %-12s\n",
+           "Code", "Designation", "Prix(XOF)", "Quantite", "Categorie", "Peremption");
+    printf("-------------------------------------------------------------------------------\n");
+
+    while (fscanf(pd, "%s\n %s\n %d\n %d\n %d\n %s\n",
+                  p.code, p.designation, &p.prix, &p.quantite, &p.categorie, p.date_p) == 6) {
+        if (strcmp(code, p.code) == 0) {
+            printf("%-6s %-20s %-8d %-10d %-10d %-12s\n",
+                   p.code, p.designation, p.prix, p.quantite, p.categorie, p.date_p);
+            trouve = 1;
+            break;
+        }
+    }
+      if(trouve) {
+        printf("\nProduit trouve avec succes.\n");
+    } else {
+        printf("Produit inexistant.\n");
+    }
+    fclose(pd);
+}
+
+
+
+/*void listeProduit() {
+    FILE *pd = fopen("PRODUIT.dat", "r");
+    verification(pd);
+    printf("\n%s\t %s\t %d\t %d\ %d\ %s\n",
+           "Code", "Designation", "Prix(XOF)", "Quantite", "Categorie", "Peremption");
+    printf("-------------------------------------------------------------------------------\n");
+    while (fscanf(pd, "%s\n %s\n %d\n %d\n %d\n %s\n",
+                  p.code, p.designation, &p.prix, &p.quantite, &p.categorie, p.date_p) == 6) {
+        printf("%-6s %-20s %-8d %-10d %-10d %-12s\n",
+               p.code, p.designation, p.prix, p.quantite, p.categorie, p.date_p);
+    }
+
+    fclose(pd);
+}*/
+
+
+void listeProduit() {
+     animationChargement("\x1b[36m🔷 Chargement du module Listes produit\x1b[0m");
+    FILE *pd = fopen("PRODUIT.dat", "r");
+    verification(pd);
+
+    // Affichage de l'entête avec bordures
+    printf("\x1b[36m╔════════╦════════════════════╦══════════╦══════════╦══════════╦══════════════╗\n\x1b[0m");
+    printf("\x1b[32m║ Code   ║ Designation        ║ Prix     ║ Quantite ║ Categorie║ Peremption   ║\n\x1b[0m");
+    printf("\x1b[36m╠════════╬════════════════════╬══════════╬══════════╬══════════╬══════════════╣\n\x1b[0m");
+
+    while (fscanf(pd, "%s\n %s\n %d\n %d\n %d\n %s\n",
+                  p.code, p.designation, &p.prix, &p.quantite, &p.categorie, p.date_p) == 6) {
+        printf("\x1b[33m║ %-6s ║ %-18s ║ %-8d ║ %-8d ║ %-8d ║ %-12s ║\n\x1b[0m",
+               p.code, p.designation, p.prix, p.quantite, p.categorie, p.date_p);
+    }
+
+    printf("\x1b[36m╚════════╩════════════════════╩══════════╩══════════╩══════════╩══════════════╝\n\x1b[0m");
+
+    fclose(pd);
+}
+
+
+
+/*void menuPrincipal() {
+    int choix;
+    do {
+        system("cls"); // Efface l'écran sous Windows
+        printf(CYAN "╔════════════════════════════════════════════════╗\n" RESET);
+        printf(CYAN "║" RESET);
+        printf(GREEN "        🌟 PHARMACIE SUNUPHARMA 🌟              " RESET);
+        printf(CYAN "║\n" RESET);
+        printf(CYAN "║" RESET);
+        printf(GREEN "            GESTION DU STOCK & VENTES           " RESET);
+        printf(CYAN "║\n" RESET);
+        printf(CYAN "╠════════════════════════════════════════════════╣\n" RESET);
+
+        printf(CYAN "║ " RESET);
+        printf(YELLOW "1. 📦  Gérer les produits                      " RESET);
+        printf(CYAN "║\n" RESET);
+
+        printf(CYAN "║ " RESET);
+        printf(YELLOW "2. 🗂️  Gérer les catégories                    " RESET);
+        printf(CYAN "║\n" RESET);
+
+        printf(CYAN "║ " RESET);
+        printf(YELLOW "3. 👥  Gérer les utilisateurs                  " RESET);
+        printf(CYAN "║\n" RESET);
+
+        printf(CYAN "║ " RESET);
+        printf(YELLOW "4. 💰  Gestion des ventes                      " RESET);
+        printf(CYAN "║\n" RESET);
+
+        printf(CYAN "║ " RESET);
+        printf(YELLOW "5. 📄  Rapport journalier                      " RESET);
+        printf(CYAN "║\n" RESET);
+
+        printf(CYAN "║ " RESET);
+        printf(RED "6. ❌  Quitter                                 " RESET);
+        printf(CYAN "║\n" RESET);
+
+        printf(CYAN "╚════════════════════════════════════════════════╝\n" RESET);
+
+        printf("Votre choix : ");
+        scanf("%d", &choix);
+
+        switch (choix) {
+            case 1:
+                menuProduits();
+                break;
+            case 2:
+                menuCategorie();
+                break;
+            case 3:
+                menuUtilisateurs();
+                break;
+            case 4:
+                menuVentes();
+                break;
+            case 5:
+                menuRapport();
+                break;
+            case 6:
+                printf(GREEN "\nMerci d'avoir utilisé l'application. À bientôt !\n" RESET);
+                break;
+            default:
+                printf(RED "\n[!] Choix invalide, réessayez.\n" RESET);
+                break;
+        }
+
+        if (choix != 6) {
+            printf("\nAppuyez sur Entrée pour continuer...");
+        }
+
+    } while (choix != 6);
+}*/
+
+
+
+void menuPrincipal(const char* role) {
+    int choix;
+    do {
+        system("cls"); // Efface l'écran sous Windows
+        printf(CYAN "╔════════════════════════════════════════════════╗\n" RESET);
+        printf(CYAN "║" RESET);
+        printf(GREEN "        🌟 PHARMACIE SUNUPHARMA 🌟              " RESET);
+        printf(CYAN "║\n" RESET);
+        printf(CYAN "║" RESET);
+        printf(GREEN "            GESTION DU STOCK & VENTES           " RESET);
+        printf(CYAN "║\n" RESET);
+        printf(CYAN "╠════════════════════════════════════════════════╣\n" RESET);
+
+        if (strcmp(role, "ADMIN") == 0) {
+            printf(CYAN "║ " RESET);
+            printf(YELLOW "1. 📦  Gérer les produits                      " RESET);
+            printf(CYAN "║\n" RESET);
+
+            printf(CYAN "║ " RESET);
+            printf(YELLOW "2. 🗂️  Gérer les catégories                    " RESET);
+            printf(CYAN "║\n" RESET);
+
+            printf(CYAN "║ " RESET);
+            printf(YELLOW "3. 👥  Gérer les utilisateurs                  " RESET);
+            printf(CYAN "║\n" RESET);
+        }
+
+        if (strcmp(role, "PHAR") == 0) {
+            printf(CYAN "║ " RESET);
+            printf(YELLOW "4. 💰  Gestion des ventes                      " RESET);
+            printf(CYAN "║\n" RESET);
+
+            printf(CYAN "║ " RESET);
+            printf(YELLOW "5. 📄  Rapport journalier                      " RESET);
+            printf(CYAN "║\n" RESET);
+        }
+
+        printf(CYAN "║ " RESET);
+        printf(RED "6. ❌  Quitter                                 " RESET);
+        printf(CYAN "║\n" RESET);
+
+        printf(CYAN "╚════════════════════════════════════════════════╝\n" RESET);
+
+        printf("Votre choix : ");
+        scanf("%d", &choix);
+
+        if (strcmp(role, "ADMIN") == 0) {
+            switch (choix) {
+                case 1: menuProduits(); break;
+                case 2: menuCategorie(); break;
+                case 3: menuUtilisateurs(); break;
+                case 6:
+                    printf(GREEN "\nMerci d'avoir utilisé l'application. À bientôt !\n" RESET);
+                    break;
+                default:
+                    printf(RED "\n[!] Choix invalide, réessayez.\n" RESET);
+                    break;
+            }
+        } else if (strcmp(role, "PHAR") == 0) {
+            switch (choix) {
+                case 4: menuVentes(); break;
+                case 5: menuRapport(); break;
+                case 6:
+                    printf(GREEN "\nMerci d'avoir utilisé l'application. À bientôt !\n" RESET);
+                    break;
+                default:
+                    printf(RED "\n[!] Choix invalide, réessayez.\n" RESET);
+                    break;
+            }
+        }
+
+        if (choix != 6) {
+            printf("\nAppuyez sur Entrée pour continuer...");
+            getchar(); getchar();
+        }
+
+    } while (choix != 6);
+}
+
+
+
+
+
+
+
+
+void animationChargement(const char *texte) {
+    printf("%s", texte);
+    for (int i = 0; i < 3; i++) {
+        Sleep(300);    // 300 ms entre chaque point
+        printf(".");
+        fflush(stdout);
+    }
+    printf("\n");
+}
+
+void menuProduits() {
+    int choice;
+    animationChargement("🛒 Ouverture du module Produits");
+
+    do {
+        menu();  // Ta fonction menu() qui affiche les options
+
+        scanf("%d", &choice);
+        switch(choice) {
+            case 1: ajouteproduit(); break;
+            case 2: modifieproduit(); break;
+            case 3: supprimeproduit(); break;
+            case 4: rechercheproduit(); break;
+            case 5: listeProduit(); break;
+            case 6: printf("Retour au menu principal...\n"); break;
+          //  case 7: printf("Merci !\n"); exit(0); break;
+            default: printf("Choix invalide.\n"); break;
+        }
+    } while(choice != 6 && choice != 7);
+}
+
