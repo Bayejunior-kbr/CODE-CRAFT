@@ -1,0 +1,162 @@
+#include <stdio.h>
+#include "categorie.h"
+
+int main() {
+    int choix;
+
+    do {
+        printf("\n=== MENU PRINCIPAL ===\n");
+        printf("1. Gestion des categories\n");
+        printf("0. Quitter\n");
+        printf("Votre choix : ");
+        scanf("%d", &choix);
+
+        switch (choix) {
+            case 1: menuCategorie(); break;
+            case 0: printf("Fermeture...\n"); break;
+            default: printf("Choix invalide.\n");
+        }
+    } while (choix != 0);
+
+    return 0;
+}
+#ifndef CATEGORIE_H
+#define CATEGORIE_H
+
+typedef struct {
+    int id;
+    char libelle[30];
+} Categorie;
+
+void ajouterCategorie();
+void supprimerCategorie();
+void listerCategories();
+int genererIDCategorie();
+Categorie* chercherCategorieParId(int id);
+void menuCategorie();
+
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "categorie.h"
+
+#define FICHIER_CATEGORIES "CATEGORIES.dat"
+
+int genererIDCategorie() {
+    FILE *f = fopen(FICHIER_CATEGORIES, "rb");
+    if (!f) return 1;
+
+    Categorie cat;
+    int lastId = 0;
+    while (fread(&cat, sizeof(Categorie), 1, f)) {
+        if (cat.id > lastId)
+            lastId = cat.id;
+    }
+    fclose(f);
+    return lastId + 1;
+}
+
+void ajouterCategorie() {
+    FILE *f = fopen(FICHIER_CATEGORIES, "ab");
+    if (!f) {
+        printf("Erreur ouverture fichier.\n");
+        return;
+    }
+
+    Categorie cat;
+    cat.id = genererIDCategorie();
+    printf("Entrez le libelle de la categorie : ");
+    scanf(" %[^\n]", cat.libelle);
+
+    fwrite(&cat, sizeof(Categorie), 1, f);
+    fclose(f);
+    printf("Categorie ajoutee avec succes.\n");
+}
+
+void listerCategories() {
+    FILE *f = fopen(FICHIER_CATEGORIES, "rb");
+    if (!f) {
+        printf("Aucune categorie trouvee.\n");
+        return;
+    }
+
+    Categorie cat;
+    printf("\nID\tLibelle\n");
+    printf("------------------------\n");
+
+    while (fread(&cat, sizeof(Categorie), 1, f)) {
+        printf("%d\t%s\n", cat.id, cat.libelle);
+    }
+
+    fclose(f);
+}
+
+void supprimerCategorie() {
+    FILE *f = fopen(FICHIER_CATEGORIES, "rb");
+    FILE *tmp = fopen("TMP.dat", "wb");
+    if (!f || !tmp) {
+        printf("Erreur d'acces aux fichiers.\n");
+        return;
+    }
+
+    Categorie cat;
+    int id, found = 0;
+
+    printf("Entrez l'ID de la categorie a supprimer : ");
+    scanf("%d", &id);
+
+    while (fread(&cat, sizeof(Categorie), 1, f)) {
+        if (cat.id != id)
+            fwrite(&cat, sizeof(Categorie), 1, tmp);
+        else
+            found = 1;
+    }
+
+    fclose(f);
+    fclose(tmp);
+    remove(FICHIER_CATEGORIES);
+    rename("TMP.dat", FICHIER_CATEGORIES);
+
+    if (found)
+        printf("Categorie supprimee.\n");
+    else
+        printf("Categorie introuvable.\n");
+}
+
+Categorie* chercherCategorieParId(int id) {
+    FILE *f = fopen(FICHIER_CATEGORIES, "rb");
+    if (!f) return NULL;
+
+    static Categorie cat;
+    while (fread(&cat, sizeof(Categorie), 1, f)) {
+        if (cat.id == id) {
+            fclose(f);
+            return &cat;
+        }
+    }
+    fclose(f);
+    return NULL;
+}
+
+void menuCategorie() {
+    int choix;
+    do {
+        printf("\n=== GESTION DES CATEGORIES ===\n");
+        printf("1. Ajouter une categorie\n");
+        printf("2. Supprimer une categorie\n");
+        printf("3. Lister les categories\n");
+        printf("0. Retour\n");
+        printf("Votre choix : ");
+        scanf("%d", &choix);
+
+        switch (choix) {
+            case 1: ajouterCategorie(); break;
+            case 2: supprimerCategorie(); break;
+            case 3: listerCategories(); break;
+            case 0: break;
+            default: printf("Choix invalide.\n");
+        }
+    } while (choix != 0);
+}
