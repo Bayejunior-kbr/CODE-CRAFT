@@ -1068,7 +1068,7 @@ int connexion(User *u_connecte) {
 
 void changer_password(User *u_connecte) {
     if (u_connecte->premier_login == 1) {
-        printf("\n🔐 Vous devez changer votre mot de passe (1ère connexion).\n");
+        printf("\n Vous devez changer votre mot de passe (1ère connexion).\n");
         char nouveau[20];
         printf("Nouveau mot de passe : ");
         fgets(nouveau, sizeof(nouveau), stdin);
