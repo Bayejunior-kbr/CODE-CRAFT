@@ -58,9 +58,22 @@ int main() {
 
         User utilisateur_connecte;
 
-        while (!connexion(&utilisateur_connecte) || strcmp(utilisateur_connecte.role, role) != 0) {
-            printf(RED "❌ Identifiants invalides ou rôle incorrect. Réessayez.\n" RESET);
-        }
+        // 🔄 Authentification correcte
+        int valide = 0;
+        do {
+            valide = connexion(&utilisateur_connecte);
+
+            if (!valide) {
+                printf(RED "❌ Identifiants invalides. Réessayez.\n" RESET);
+                continue;
+            }
+
+            if (strcmp(utilisateur_connecte.role, role) != 0) {
+                printf(RED "❌ Vous n'êtes pas autorisé avec ce rôle. Réessayez.\n" RESET);
+                valide = 0;
+            }
+
+        } while (!valide);
 
         if (utilisateur_connecte.premier_login) {
             changer_password(&utilisateur_connecte);
